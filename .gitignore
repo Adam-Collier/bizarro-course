@@ -1,0 +1,11 @@
+node_modules
+
+# webpack build output
+./public/app
+./public/styles
+
+# environment variables
+.env
+
+# global rules
+.DS_Store
