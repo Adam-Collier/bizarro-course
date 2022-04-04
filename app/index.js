@@ -88,4 +88,5 @@ class App {
   }
 }
 
-new App();
+const InitApp = new App();
+InitApp();
