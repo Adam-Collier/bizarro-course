@@ -1,8 +1,8 @@
 node_modules
 
 # webpack build output
-./public/app
-./public/styles
+public/app
+public/styles
 
 # environment variables
 .env
