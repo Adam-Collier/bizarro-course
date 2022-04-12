@@ -11,7 +11,6 @@ esbuild
     outdir: "./public",
     bundle: true,
     watch: true,
-    platform: "node",
     external: ["*.woff", "*.woff2"],
     plugins: [
       sassPlugin(),
