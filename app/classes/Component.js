@@ -1,12 +1,16 @@
-import GSAP from 'gsap';
+import EventEmitter from 'events';
 
 // This will be a class we can reuse for all of the pages
-export default class Page {
+export default class Component extends EventEmitter {
   // on initialisation we will grab the main page element (this.selector), whatever elements we need (this.selectorChildren) and the page id
-  constructor({ element, elements, id }) {
+  constructor({ element, elements }) {
+    super();
+
     this.selector = element;
     this.selectorChildren = { ...elements };
-    this.id = id;
+
+    this.create();
+    this.addEventListeners();
   }
 
   // notice how we haven't called this in the constructor, we will call it in the page classes we extend this from
@@ -42,24 +46,7 @@ export default class Page {
     }
   }
 
-  // the show and hide animation
-  show() {
-    // use a promise here so we can use async await
-    return new Promise((resolve) => {
-      GSAP.to(this.element, {
-        autoAlpha: 1,
-        onComplete: resolve,
-      });
-    });
-  }
+  addEventListeners() {}
 
-  hide() {
-    // use a promise here so we can use async await
-    return new Promise((resolve) => {
-      GSAP.to(this.element, {
-        autoAlpha: 0,
-        onComplete: resolve,
-      });
-    });
-  }
+  removeEventListeners() {}
 }

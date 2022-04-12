@@ -1,4 +1,5 @@
 import { each } from 'lodash';
+import Preloader from './components/Preloader';
 import About from './pages/About';
 import Collections from './pages/Collections';
 import Detail from './pages/Detail';
@@ -7,9 +8,17 @@ import Home from './pages/Home';
 class App {
   // a constructor is called on initilisation aka new App();
   constructor() {
+    this.createPreloader();
     this.createContent();
     this.createPages();
     this.addLinkListeners();
+  }
+
+  createPreloader () {
+    // initialise the preloader
+    this.preloader = new Preloader()
+    // once the "completed" event has been emitted, run onPreloaded
+    this.preloader.once("completed", () => this.onPreloaded);
   }
 
   // createContent is an example of a method, we can then access this via this.createContent
@@ -33,7 +42,13 @@ class App {
     this.page = this.pages[this.template];
     // we call the create and show methods from the Page Class we have extended
     this.page.create();
-    this.page.show();
+  }
+
+  async onPreloaded () {
+    // destroy the preloader when everything has loaded
+    this.preloader.destroy()
+    // only animate the page in when the preloader has been destroyed
+    await this.page.show()
   }
 
   async onChange(url) {
@@ -62,9 +77,10 @@ class App {
       this.content.innerHTML = divContent.innerHTML;
       // update the page to initialise the new page class
       this.page = this.pages[this.template];
-      // create the new page and show it
+      // create the new page, show it and add link listeners
       this.page.create();
       this.page.show();
+      this.addLinkListeners();
     } else {
       console.log('Error fetching page');
     }
@@ -88,5 +104,4 @@ class App {
   }
 }
 
-const InitApp = new App();
-InitApp();
+new App();
