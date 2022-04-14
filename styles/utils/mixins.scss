@@ -24,3 +24,10 @@
   align-items: center;
   justify-content: center;
 }
+
+%page {
+  @extend %cover;
+}
+
+%page__wrapper {
+}

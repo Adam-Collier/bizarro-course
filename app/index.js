@@ -11,14 +11,18 @@ class App {
     this.createPreloader();
     this.createContent();
     this.createPages();
+
+    this.addEventListeners();
     this.addLinkListeners();
+
+    this.update();
   }
 
-  createPreloader () {
+  createPreloader() {
     // initialise the preloader
-    this.preloader = new Preloader()
+    this.preloader = new Preloader();
     // once the "completed" event has been emitted, run onPreloaded
-    this.preloader.once("completed", () => this.onPreloaded);
+    this.preloader.once('completed', () => this.onPreloaded());
   }
 
   // createContent is an example of a method, we can then access this via this.createContent
@@ -44,13 +48,16 @@ class App {
     this.page.create();
   }
 
-  async onPreloaded () {
+  onPreloaded() {
     // destroy the preloader when everything has loaded
-    this.preloader.destroy()
+    this.preloader.destroy();
+    // resize the height of the content
+    this.onResize();
     // only animate the page in when the preloader has been destroyed
-    await this.page.show()
+    this.page.show();
   }
 
+  // called from addLinkListeners on every link click
   async onChange(url) {
     // hide the page
     await this.page.hide();
@@ -79,11 +86,39 @@ class App {
       this.page = this.pages[this.template];
       // create the new page, show it and add link listeners
       this.page.create();
+      // get the current content height and update our scroll limit
+      this.onResize();
+      // show the page
       this.page.show();
+      // listen for any clicks and run onChange
       this.addLinkListeners();
     } else {
       console.log('Error fetching page');
     }
+  }
+
+  onResize() {
+    // get the height of the pages content and update the scroll limit
+    if (this.page && this.page.update) {
+      this.page.onResize();
+    }
+  }
+
+  update() {
+    // if the page has been created and the update method exists run the update method
+    // the page update method sets our current and target scroll position and transitions smoothly between the two
+    if (this.page && this.page.update) {
+      this.page.update();
+    }
+    // we re run this method on every animation frame
+    // https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame
+    this.frame = window.requestAnimationFrame(() => this.update());
+  }
+
+  addEventListeners() {
+    // when we resize the viewport our contents height will change
+    // we need to update our scroll limit whenever that happens
+    window.addEventListener('resize', (e) => this.onResize(e));
   }
 
   addLinkListeners() {

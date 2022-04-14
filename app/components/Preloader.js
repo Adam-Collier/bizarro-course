@@ -14,21 +14,21 @@ export default class Preloader extends Component {
         images: document.querySelectorAll('img'),
       },
     });
-
+    // split the text so we can animate it
     split({
       element: this.elements.title,
       expression: '<br>',
     });
-
+    // for some reason we do it again, maybe to add some overflow animation styles??
     split({
       element: this.elements.title,
       expression: '<br>',
     });
-
+    // set the titleSpans element
     this.elements.titleSpans = this.elements.title.querySelectorAll("span span")
-
+    // the number of assets we have loaded
     this.length = 0;
-
+    // run the preloader
     this.createLoader();
   }
 
@@ -61,14 +61,14 @@ export default class Preloader extends Component {
       this.animateOut = GSAP.timeline({
         delay: 1,
       });
-
+      // animate the title out
       this.animateOut.to(this.elements.titleSpans, {
           duration: 1.5,
           ease: "expo.out",
           stagger: 0.1,
           y: "100%"
       })
-
+      // animate the numbers out
       this.animateOut.to(
         this.elements.numberText,
         {
@@ -80,21 +80,24 @@ export default class Preloader extends Component {
         '-=1.4'
       );
 
-      // animate the element out
+      // animate the whole preloader element out
       this.animateOut.to(this.element, {
         duration: 1.5,
         ease: 'expo.out',
         scaleY: 0,
         transformOrigin: '100% 100%',
       }, "-=1");
-      // let the
+      // emit completed when the preloader has animated out
+      // we can listen to this and run some code
+      // e.g fade in/animate some content
       this.animateOut.call(() => {
-        // this.emit('completed');
+        this.emit('completed');
       });
     });
   }
 
   destroy() {
+    // remove the preloader element
     this.element.parentNode.removeChild(this.element);
   }
 }
