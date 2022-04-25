@@ -120,13 +120,11 @@ function splitText(text, expression) {
 }
 
 function parseLine(line) {
-  if (line === '') {
-    return line;
-  } else if (line === ' ') {
-    return '&nbsp;';
-  } else {
-    line = line.trim();
+  line = line.trim();
 
+  if (line === '' || line === ' ') {
+    return line;
+  } else {
     return line === '<br>'
       ? '<br>'
       : `<span>${line}</span>` + (line.length > 1 ? ' ' : '');

@@ -15,8 +15,14 @@ export default class Component extends EventEmitter {
 
   // notice how we haven't called this in the constructor, we will call it in the page classes we extend this from
   create() {
-    // grab the pages main class .detail, .about, .home etc
-    this.element = document.querySelector(this.selector);
+    // not too sure what is happening here tbh
+    if(this.selector instanceof window.HTMLElement){
+      this.element = this.selector;
+    } else {
+      // grab the pages main class .detail, .about, .home etc
+      this.element = document.querySelector(this.selector);
+    }
+    
     // create an empty object we can add elements too
     this.elements = {};
 

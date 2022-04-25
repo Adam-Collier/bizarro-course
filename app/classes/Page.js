@@ -1,11 +1,24 @@
 import GSAP from 'gsap';
+import normalizeWheel from 'normalize-wheel';
+import { each, map } from 'lodash';
 
+import Title from '../animations/Title';
+import Paragraph from '../animations/Paragraph';
+import Label from '../animations/Label';
+import Highlight from '../animations/Highlight';
 // This will be a class we can reuse for all of the pages
 export default class Page {
   // on initialisation we will grab the main page element (this.selector), whatever elements we need (this.selectorChildren) and the page id
   constructor({ element, elements, id }) {
     this.selector = element;
-    this.selectorChildren = { ...elements };
+    this.selectorChildren = {
+      ...elements,
+      // we specify elements we will be animating here too
+      animationsLabels: '[data-animations="label"]',
+      animationsParagraphs: '[data-animations="paragraph"]',
+      animationsTitles: '[data-animations="title"]',
+      animationsHighlights: '[data-animations="highlight"]',
+    };
     this.id = id;
 
     // store everything we need for the scroll here
@@ -52,6 +65,44 @@ export default class Page {
         }
       }
     }
+
+    this.createAnimations()
+  }
+
+  // loop through each set of elements and add the animation
+  // remember we extended the Animation class so each new instance animates in and out when they enter the viewport
+  createAnimations() {
+    this.animationsHighlights = map(this.elements.animationsHighlights, (element) => {
+      return new Highlight({
+        element,
+      });
+    });
+
+    this.animationsTitles = map(this.elements.animationsTitles, element => {
+      return new Title({
+        element
+      })
+    })
+
+    this.animationsParagraphs = map(
+      this.elements.animationsParagraphs,
+      (element) => {
+        return new Paragraph({
+          element,
+        });
+      }
+    );
+
+    this.animationsLabels = map(
+      this.elements.animationsLabels,
+      (element) => {
+        return new Label({
+          element,
+        });
+      }
+    );
+
+    this.animations = [...this.animationsTitles, ...this.animationsParagraphs, ...this.animationsLabels, ...this.animationsHighlights]
   }
 
   // the show and hide animation
@@ -95,11 +146,14 @@ export default class Page {
 
   onMouseWheel(event) {
     // The deltaY property returns a positive value when scrolling down, and a negative value when scrolling up, otherwise 0.
-    const { deltaY } = event;
+    // const { deltaY } = event;
+
+    // instead of using deltaY we use normalizeWheel to unify browser behaviour
+    const { pixelY } = normalizeWheel(event);
     // amend the scroll target value
     // this is the value we will be "lerping to"
     // not watched but this might help: https://www.youtube.com/watch?v=8uLVnM36XUc
-    this.scroll.target += deltaY;
+    this.scroll.target += pixelY;
   }
 
   update() {
@@ -136,6 +190,9 @@ export default class Page {
         this.scroll.limit =
           this.elements.wrapper.clientHeight - window.innerHeight;
     }
+
+    // when we calculate the page size we can also do some calculations for the animation
+    each(this.animations, animations => animations.onResize())
   }
 
   addEventListeners() {

@@ -50,3 +50,14 @@ img {
 .content {
   @extend %cover;
 }
+
+// make sure we can animate our elements in from a hidden view
+[data-animations='title'],
+[data-animations='label'],
+[data-animations='paragraph'] {
+  span {
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: top;
+  }
+}
