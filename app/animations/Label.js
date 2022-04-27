@@ -16,6 +16,11 @@ export default class Label extends Animation {
       append: true,
     });
 
+    split({
+      element: this.element,
+      append: true,
+    });
+
     // grab the spans
     this.elementLinesSpans = this.element.querySelectorAll('span span');
   }

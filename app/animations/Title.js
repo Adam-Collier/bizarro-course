@@ -15,6 +15,11 @@ export default class Title extends Animation {
         element: this.element, append: true
       });
 
+      split({
+        element: this.element,
+        append: true,
+      });
+
       this.elementLinesSpans = this.element.querySelectorAll('span span');
     }
 
